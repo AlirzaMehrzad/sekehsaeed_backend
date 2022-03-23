@@ -14,12 +14,14 @@ const upload = multer({
 })
 
 
-router.get('/' ,usersControllers.usersList)
-router.post('/', upload.single('userImage') ,usersControllers.createUser)
+// router.get('/userslist' ,usersControllers.usersList)
+router.post('/register' ,usersControllers.register)
+router.post('/login' ,usersControllers.login)
+router.get('/refresh_token' ,usersControllers.refreshtoken)
 
-router.get('/:id', usersControllers.getUser)
-router.delete('/:id', usersControllers.deleteUser)
-router.patch('/:id', usersControllers.updateUser)
+// router.get('/:id', usersControllers.getUser)
+// router.delete('/:id', usersControllers.deleteUser)
+// router.patch('/:id', usersControllers.updateUser)
 
 
 module.exports = router

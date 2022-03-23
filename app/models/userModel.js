@@ -1,12 +1,14 @@
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
-    first_name:{type:String, required:true},
-    last_name:String,
-    mobile:String,
+    fname:{type:String, required:true, trim:true},
+    lname:{type:String, required:true, trim:true},
+    mobile:{type:String, required:true, unique:true},
+    password:{type:String, required:true},
     email:String,
+    role:{type:Number, default:0},
+    cart:{type:Array, default: []},
     userImage:String,
-    wallet:{type:Number, default:0},
     createdAt:{type:Date, default:Date.now()},
     updateAt: {type:Date, default:Date.now()}
 })
