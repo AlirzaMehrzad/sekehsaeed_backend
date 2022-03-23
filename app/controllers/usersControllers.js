@@ -7,7 +7,7 @@ const userControll = {
         try {
             const {fname,lname,mobile,password,email} = req.body
             // const userImage = req.file.path
-            if(fname === undefined|| lname === "" || lname === ""){
+            if(fname === undefined|| lname === "" || lname === "" || password === ""){
                 return res.status(422).send({
                     error: true,
                     data:{
@@ -81,7 +81,6 @@ const userControll = {
                 })
             }
 
-            
             // if login successful, create access token and refresh token
             const accesstoken = creatAccessToken({id: user._id})         
             const refreshtoken = createRefreshToken({id: user._id})
@@ -95,6 +94,20 @@ const userControll = {
                 token: accesstoken
             })
 
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    logout: async (req, res, next) => {
+        try {
+            res.clearCookie('refreshtoken' , {
+                path: '/api/v1/user/refresh_token'
+            })
+
+            return res.status(201).send({
+                message: 'خروج موفق'
+            })
         } catch (error) {
             next(error)
         }
@@ -130,6 +143,20 @@ const userControll = {
         res.status(201).send({
             message: rf_token
         })
+    },
+
+    getUser: async (req, res, next) => {
+        try {
+            const user = await userModel.findById(req.user.id).select('-password')
+            if (!user) {
+                return res.status(400).send({
+                    message: 'کاربر وجود ندارد'
+                })
+            }
+            res.send(user)
+        } catch (error) {
+            next(error)
+        }
     }
 } 
 

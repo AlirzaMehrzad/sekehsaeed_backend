@@ -1,24 +1,27 @@
-const tokenService = require('../services/tokenService')
+const jwt = require('jsonwebtoken')
 
-module.exports = (req, res, next) => {
+const auth = (req, res, next) => {
+    try {
+        const token = req.header("Authorization")
+        if (!token) {
+            return res.status(400).send({
+                message: 'شما صلاحیت استفاده از این قسمت را ندارید'
+            })
+        }
 
-    if(!('authorization' in req.headers)){
-        return res.status(401).send({
-            status: 'error',
-            code: 401,
-            message: 'شما صلاحیت استفاده از این api را ندارید'
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+            if (err) {
+                return res.status(400).send({
+                    message: 'شما صلاحیت استفاده از این قسمت را ندارید'
+                })
+            }
+        req.user = user
+        next()
+        
         })
+    } catch (error) {
+        return res.status(500).json({msg: err.message})
     }
-
-    const token = tokenService.verify(req.headers.authorization)
-    
-    if(!token){
-        return res.status(401).send({
-            status: 'error',
-            code: 401,
-            message: 'توکن شما معتبر نیست'
-        })
-    }
-    
-    next()
 }
+
+module.exports = auth
