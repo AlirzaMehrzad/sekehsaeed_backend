@@ -8,4 +8,7 @@ router.route('/')
     .get(categoryControll.getCategories)
     .post(auth, authAdmin, categoryControll.createCategory)
 
+router.route('/:id')
+    .delete(auth, authAdmin, categoryControll.deleteCategory)
+
 module.exports = router

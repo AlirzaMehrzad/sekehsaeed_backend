@@ -1,12 +1,12 @@
 const categoryModel = require('../models/categoryModel')
 
 const categoryControll = {
-    getCategories: async(req, res) =>{
+    getCategories: async(req, res, next) =>{
         try {
             const categories = await categoryModel.find()
             res.send({categories})
         } catch (error) {
-            return res.status(500).send({msg: err.message})
+            next(error)
         }
     },
 
@@ -27,6 +27,18 @@ const categoryControll = {
         } catch (error) {
             next(error)
 
+        }
+    },
+
+    deleteCategory: async (req, res, next) => {
+        try {
+            await categoryModel.findByIdAndDelete(req.params.id)
+            res.status(201).send({
+                message: 'دسته بندی با موفقیت حذف شد'
+            })
+            
+        } catch (error) {
+            next(error)
         }
     }
 }
