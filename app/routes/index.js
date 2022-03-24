@@ -1,8 +1,9 @@
 const userRouter = require('./userRouter')
-const sessionRouter = require('./session')
+const categoryRouter = require('./categoryRouter')
+
 module.exports = (app) =>{
 
     app.use('/api/v1/user', userRouter)
-    app.use('/api/v1/session', sessionRouter)
+    app.use('/api/v2/category', categoryRouter)
 
 }

@@ -1,0 +1,34 @@
+const categoryModel = require('../models/categoryModel')
+
+const categoryControll = {
+    getCategories: async(req, res) =>{
+        try {
+            const categories = await categoryModel.find()
+            res.send({categories})
+        } catch (error) {
+            return res.status(500).send({msg: err.message})
+        }
+    },
+
+    createCategory: async(req, res, next) =>{
+        try {
+            const {en_name, pe_name} = req.body
+            const category = await categoryModel.findOne({en_name})
+            if (category) {
+                return res.status(400).send({message: 'این دسته بندی از قبل وجود دارد'})
+            }
+            const newCategory = new categoryModel({en_name, pe_name})
+            await newCategory.save()
+            res.status(201).send({
+                success: true,
+                message: 'دسته بندی جدید ایجاد شد'
+            })
+
+        } catch (error) {
+            next(error)
+
+        }
+    }
+}
+
+module.exports = categoryControll
