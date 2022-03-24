@@ -10,5 +10,6 @@ router.route('/')
 
 router.route('/:id')
     .delete(auth, authAdmin, categoryControll.deleteCategory)
+    .put(auth, authAdmin, categoryControll.updateCategory)
 
 module.exports = router

@@ -40,6 +40,19 @@ const categoryControll = {
         } catch (error) {
             next(error)
         }
+    },
+
+    updateCategory: async (req, res, next) => {
+        try {
+          const {en_name , pe_name} = req.body
+          await categoryModel.findOneAndUpdate({id: req.params.id},{en_name},{pe_name})
+          res.status(201).send({
+              message: 'دسته بندی با موفقیت ویرایش شد'
+          })
+          
+        } catch (error) {
+            next(error)
+        }
     }
 }
 
