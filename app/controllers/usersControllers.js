@@ -135,9 +135,7 @@ const userControll = {
            })
 
         } catch (error) {
-            return res.status(404).send({
-                error:true, message:'token not refreshed'
-            })
+          next(error)
         }
 
         res.status(201).send({
