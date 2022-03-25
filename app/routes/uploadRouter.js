@@ -10,7 +10,7 @@ cloudinary.config({
     api_secret: process.env.CLOUD_API_SECRET
 })
 // upload image
-router.post('/image', (req, res) => {
+router.post('/image-upload',auth, authAdmin, (req, res) => {
     try {
         // console.log(req.files);
         if (!req.files || Object.keys(req.files).length === 0) {
@@ -32,6 +32,22 @@ router.post('/image', (req, res) => {
             }
             removeTmp(file.tempFilePath)
             res.send({message: 'تصویر آپلود شد', public_id: result.public_id, url: result.secure_url})
+        })
+
+    } catch (error) {
+        return res.status(500).send({err: error.message})
+    }
+})
+
+//delete image
+router.post('/image-delete',auth, authAdmin, (req, res) =>{
+    try {
+        const {public_id} = req.body
+        if (!public_id) {
+            return res.status(400).send({message: 'عکسی انتخاب نشده است'})
+        }
+        cloudinary.v2.uploader.destroy(public_id, async(err, result) =>{
+           return res.status(201).send({message: 'تصویر حذف شد'}) 
         })
 
     } catch (error) {
