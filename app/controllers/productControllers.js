@@ -1,9 +1,36 @@
 const productModel = require('../models/productModel')
 
+//filter , sorting, pagination
+class APIfeatures {
+    constructor(query, queryString){
+        this.query = query
+        this.queryString = queryString
+    }
+    filtering(){
+        const queryObj = {...this.queryString} // queryString = req.query   
+        
+        const excludedFields = ['page', 'sort', 'limit']
+        excludedFields.forEach(e1 => delete(queryObj[e1]))
+
+        let queryStr = JSON.stringify(queryObj)
+        queryStr = queryStr.replace(/\b(gte|gt|lt|lt|lte|regex)\b/g, match => '$' + match)
+        
+        this.query.find(JSON.parse(queryStr))
+
+        return this
+    }
+
+    sorting(){}
+
+    paginating(){}
+}
+
 const productControll = {
     getProducts: async (req, res) => {
         try {
-            const products = await productModel.find()
+            const features = new APIfeatures(productModel.find(), req.query).filtering()
+            const products = await features.query
+
             res.status(201).send({products})
         } catch (error) {
             return res.status(500).send({err: error.message})
@@ -35,7 +62,7 @@ const productControll = {
             await newProduct.save()
             res.status(201).send({
                 message: 'محصول با موفقیت اضافه شد',
-                data: {newProduct}
+                newProduct
             })
             
 
