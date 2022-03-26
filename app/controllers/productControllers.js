@@ -12,11 +12,9 @@ const productControll = {
 
     createProducts: async (req, res) => {
         try {
-            
             const {product_id, title, price, description, content, images, category} = req.body
             if (!images) {
                 return res.status(400).send({message: 'تصویری برای محصول آپلود کنید'})
-            
             }
 
             const product = await productModel.findOne({product_id})
@@ -48,7 +46,10 @@ const productControll = {
 
     deleteProducts: async (req, res) => {
         try {
-            
+            await productModel.findOneAndDelete(req.params.id)
+            res.status(201).send({
+                message: 'محصول با موفقیت حذف شد'
+            })
         } catch (error) {
             return res.status(500).send({err: error.message})
         }
@@ -56,7 +57,25 @@ const productControll = {
 
     updateProducts: async (req, res) => {
         try {
-            
+            const {product_id, title, price, description, content, images, category} = req.body
+            if (!images) {
+               return res.status(400).send({message: 'تصویری برای محصول آپلود کنید'})
+            }
+
+            await productModel.findOneAndUpdate({_id: req.params.id} , {
+                product_id, 
+                title, 
+                price, 
+                description, 
+                content, 
+                images, 
+                category 
+            })
+
+            res.status(201).send({
+                message: 'محصول با موفقیت بروزرسانی شد'
+            })
+
         } catch (error) {
             return res.status(500).send({err: error.message})
         }
