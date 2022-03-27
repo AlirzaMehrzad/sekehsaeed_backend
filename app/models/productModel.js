@@ -10,6 +10,8 @@ const productsSchema = new mongoose.Schema({
     category:{type: String, required: true},
     checked:{type: Boolean, default: false},
     sold:{type: Number, default: 0},
+}, {
+    timestamps: true
 })
 
 const productsModel = mongoose.model('Products', productsSchema)

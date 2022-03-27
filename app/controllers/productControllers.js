@@ -20,7 +20,15 @@ class APIfeatures {
         return this
     }
 
-    sorting(){}
+    sorting(){
+        if (this.queryString.sort) {
+            const sortBy = this.queryString.sort.split(',').join(' ')
+            this.query = this.query.sort(sortBy)
+        }else{
+            this.query = this.query.sort('-createdAt')
+        }
+        return this
+    }
 
     paginating(){}
 }
@@ -28,7 +36,9 @@ class APIfeatures {
 const productControll = {
     getProducts: async (req, res) => {
         try {
-            const features = new APIfeatures(productModel.find(), req.query).filtering()
+            const features = new APIfeatures(productModel.find(), req.query)
+            .filtering().sorting()
+
             const products = await features.query
 
             res.status(201).send({products})
