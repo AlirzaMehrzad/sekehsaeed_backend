@@ -10,9 +10,7 @@ const userControll = {
       if (fname === undefined || lname === "" || password === "") {
         return res.status(422).send({
           error: true,
-          data: {
-            message: "اطلاعات ارسالی معتبر نیست",
-          },
+          message: "اطلاعات ارسالی معتبر نیست",
         });
       }
       // validation
