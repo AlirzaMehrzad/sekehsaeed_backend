@@ -46,7 +46,9 @@ const userControll = {
 
       const accesstoken = creatAccessToken({ id: newUser._id });
       const refreshtoken = createRefreshToken({ id: newUser._id });
+
       res.cookie("refreshtoken", refreshtoken, {
+        httpOnly: true,
         path: "/api/v1/user/refresh_token",
       });
 
@@ -54,9 +56,7 @@ const userControll = {
         success: true,
         message: "کاربر جدید با موفقیت ایجاد شد",
         token: accesstoken,
-        data: {
-          newUser,
-        },
+        newUser,
       });
     } catch (error) {
       next(error);
@@ -80,17 +80,18 @@ const userControll = {
         });
       }
 
-      // if login successful, create access token and refresh token
       const accesstoken = creatAccessToken({ id: user._id });
       const refreshtoken = createRefreshToken({ id: user._id });
+
       res.cookie("refreshtoken", refreshtoken, {
+        httpOnly: true,
         path: "/api/v1/user/refresh_token",
       });
 
-      res.status(201).send({
+      res.status(200).send({
+        accesstoken,
         success: true,
         message: "بله! ورود موفقیت آمیز",
-        token: accesstoken,
       });
     } catch (error) {
       next(error);
@@ -117,7 +118,7 @@ const userControll = {
       if (!rf_token) {
         return res.status(400).send({
           error: true,
-          message: "لطفا وارد حساب کاربری شوید یا ثبت نام کنید",
+          message: "...لطفا وارد حساب کاربری شوید یا ثبت نام کنید",
         });
       }
 
@@ -134,10 +135,6 @@ const userControll = {
     } catch (error) {
       next(error);
     }
-
-    res.status(201).send({
-      message: rf_token,
-    });
   },
 
   getUser: async (req, res, next) => {
