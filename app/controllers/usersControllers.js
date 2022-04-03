@@ -54,7 +54,7 @@ const userControll = {
 
       res.status(201).send({
         success: true,
-        message: "کاربر جدید با موفقیت ایجاد شد",
+        message: `${newUser.fname} عزیز به سامانه خوش آمدید`,
         token: accesstoken,
         newUser,
       });
@@ -91,7 +91,7 @@ const userControll = {
       res.status(200).send({
         accesstoken,
         success: true,
-        message: "بله! ورود موفقیت آمیز",
+        message: `${user.fname} ${user.lname} خوش آمدید`,
       });
     } catch (error) {
       next(error);
