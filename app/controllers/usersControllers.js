@@ -105,7 +105,7 @@ const userControll = {
       });
 
       return res.status(201).send({
-        message: "خروج موفق",
+        message: "با موفقیت از سیستم خارج شدید",
       });
     } catch (error) {
       next(error);
