@@ -1,20 +1,18 @@
-const express = require('express')
-const router = express.Router()
-const auth = require('../middlewares/auth')
-const usersControllers = require('../controllers/usersControllers')
+const express = require("express");
+const router = express.Router();
+const auth = require("../middlewares/auth");
+const usersControllers = require("../controllers/usersControllers");
 
+router.post("/register", usersControllers.register);
 
-router.post('/register' ,usersControllers.register)
+router.post("/login", usersControllers.login);
 
-router.post('/login' ,usersControllers.login)
+router.get("/logout", usersControllers.logout);
 
-router.get('/logout' ,usersControllers.logout)
+router.get("/refresh_token", usersControllers.refreshtoken);
 
-router.get('/refresh_token' ,usersControllers.refreshtoken)
+router.get("/infor", auth, usersControllers.getUser);
 
-router.get('/infor' , auth, usersControllers.getUser)
+router.patch("/addcart", auth, usersControllers.addcart);
 
-
-
-
-module.exports = router
+module.exports = router;

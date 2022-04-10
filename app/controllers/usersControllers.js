@@ -150,6 +150,28 @@ const userControll = {
       next(error);
     }
   },
+
+  addcart: async (req, res, next) => {
+    try {
+      const user = await userModel.findById(req.user.id);
+      if (!user) {
+        return res.status(400).send({
+          message: "کاربر وجود ندارد",
+        });
+      }
+
+      await userModel.findOneAndUpdate(
+        { _id: req.user.id },
+        { cart: req.body.cart }
+      );
+
+      res.send({
+        message: "با موفقیت به سبد خرید اضافه شد",
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 
 const creatAccessToken = (user) => {
