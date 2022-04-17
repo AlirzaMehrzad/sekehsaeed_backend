@@ -1,4 +1,5 @@
 const ZarinpalCheckout = require("zarinpal-checkout");
+const PaymentModel = require("../models/paymentModel");
 /**
  * Create ZarinPal
  * @param {String} `2b5b7f02-3a09-11ea-9071-000c295eb8fc` [Merchant ID]
@@ -12,22 +13,31 @@ const zarinpal = ZarinpalCheckout.create(
 const paymentControll = {
   paymentRequest: async (req, res, next) => {
     try {
+      const total = req.body.total;
+
       /**
        * PaymentRequest [module]
        * @return {String} URL [Payement Authority]
        */
+
+      const payment = new PaymentModel({
+        price: total,
+      });
+
       zarinpal
         .PaymentRequest({
-          Amount: "1200", // In Tomans
-          CallbackURL: "http://localhost:4001/api/v5/payment",
+          Amount: total, // In Tomans
+          CallbackURL: "http://localhost:4001/api/v5/payment/verify",
           Description: "A Payment from Node.JS",
           Email: "hi@siamak.work",
           Mobile: "09120000000",
         })
-        .then((res) => {
-          if (res.status === 100) {
-            // return res.status(200).send({ url: res.url });
-            console.log(res.url);
+        .then((response) => {
+          if (response.status === 100) {
+            res.send({
+              status: "success",
+              url: response.url,
+            });
           }
         })
         .catch((err) => {
@@ -35,6 +45,13 @@ const paymentControll = {
         });
     } catch (error) {
       next(error);
+    }
+  },
+
+  paymentVerify: async (req, res, next) => {
+    if (req.query.Status && req.query.Status !== "OK") {
+      console.log("Payment Failed");
+      res.redirect("/");
     }
   },
 };
