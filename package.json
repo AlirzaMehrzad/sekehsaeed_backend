@@ -19,7 +19,9 @@
     "loadash": "^1.0.0",
     "mongoose": "^6.1.7",
     "multer": "^1.4.4",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "request-promis": "^0.0.1-security",
+    "zarinpal-checkout": "^0.2.7"
   },
   "devDependencies": {
     "eslint": "^7.32.0",

@@ -165,7 +165,7 @@ const userControll = {
         { cart: req.body.cart }
       );
 
-      res.send({
+      res.status(200).send({
         message: "با موفقیت به سبد خرید اضافه شد",
       });
     } catch (error) {
