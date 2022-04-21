@@ -78,8 +78,18 @@ const paymentControll = {
         } else {
           payment.set({ status: true });
 
+          // empty cart after payment
+          UserModel.findOne({ _id: payment.user_id }, (err, user) => {
+            if (err) {
+              console.log(err);
+            } else {
+              user.cart = [];
+              user.save();
+            }
+          });
+
           payment.save();
-          res.redirect("http://localhost:3000");
+          res.redirect("http://localhost:3000/paymentSuccess");
         }
       })
       .catch((err) => {
