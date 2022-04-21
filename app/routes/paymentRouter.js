@@ -6,5 +6,6 @@ const paymentControll = require("../controllers/paymentControllers");
 
 router.route("/").post(paymentControll.paymentRequest);
 router.route("/verify").get(paymentControll.paymentVerify);
+router.route("/history").post(paymentControll.getPayment);
 
 module.exports = router;

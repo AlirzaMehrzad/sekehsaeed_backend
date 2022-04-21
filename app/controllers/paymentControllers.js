@@ -96,6 +96,16 @@ const paymentControll = {
         next(err);
       });
   },
+
+  getPayment: async (req, res, next) => {
+    //get all user payments
+    try {
+      const payments = await PaymentModel.find({});
+      res.send(payments);
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 
 module.exports = paymentControll;
