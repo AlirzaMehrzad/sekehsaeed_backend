@@ -5,8 +5,7 @@ const jwt = require("jsonwebtoken");
 const userControll = {
   register: async (req, res, next) => {
     try {
-      const { fname, lname, mobile, password, email } = req.body;
-      // const userImage = req.file.path
+      const { fname, lname, mobile, password, email, address } = req.body;
       if (fname === undefined || lname === "" || password === "") {
         return res.status(422).send({
           error: true,
@@ -39,6 +38,7 @@ const userControll = {
         mobile,
         password: passwordHash,
         email,
+        address,
         // userImage
       });
 

@@ -7,18 +7,23 @@ const paymentSchema = new mongoose.Schema(
       required: true,
     },
 
-    name: {
+    fname: {
       type: String,
       required: true,
     },
 
-    email: {
+    lname: {
       type: String,
       required: true,
     },
 
     address: {
       type: Object,
+      required: true,
+    },
+
+    mobile: {
+      type: Number,
       required: true,
     },
 
@@ -31,6 +36,13 @@ const paymentSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    cart: {
+      type: Array,
+      required: true,
+    },
+
+    resnumber: { type: String, required: true },
   },
   {
     timestamps: true,
