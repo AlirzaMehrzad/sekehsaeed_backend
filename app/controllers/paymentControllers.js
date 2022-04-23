@@ -1,6 +1,7 @@
 const ZarinpalCheckout = require("zarinpal-checkout");
 const PaymentModel = require("../models/paymentModel");
 const UserModel = require("../models/userModel");
+const moment = require("jalali-moment");
 /**
  * Create ZarinPal
  * @param {String} `2b5b7f02-3a09-11ea-9071-000c295eb8fc` [Merchant ID]
@@ -45,6 +46,8 @@ const paymentControll = {
             var createTransaction =
               Date.now() - Math.floor(Math.random() * 100);
 
+            var clock = getClockService();
+
             let pay = new PaymentModel({
               transactionID: createTransaction,
               user_id: userID,
@@ -55,6 +58,8 @@ const paymentControll = {
               price: total,
               cart: cart,
               resnumber: response.authority,
+              time: moment().locale("fa").format("YYYY/M/D"),
+              clock: clock,
             });
             pay.save();
           }
@@ -81,9 +86,7 @@ const paymentControll = {
         if (response.status !== 100) {
           res.redirect("http://localhost:3000/paymentFail");
         } else {
-          payment.set({ status: true });
-
-          // empty cart after payment
+          payment.set({ status: true, clock: getClockService() });
           UserModel.findOne({ _id: payment.user_id }, (err, user) => {
             if (err) {
               console.log(err);
@@ -92,7 +95,6 @@ const paymentControll = {
               user.save();
             }
           });
-
           payment.save();
           res.redirect("http://localhost:3000/paymentSuccess");
         }
@@ -113,6 +115,25 @@ const paymentControll = {
       next(error);
     }
   },
+
+  Invoice: async (req, res, next) => {
+    try {
+      const userID = req.body.userID;
+      const lastPayment = await PaymentModel.find({ user_id: userID })
+        .sort({ _id: -1 })
+        .limit(1);
+      res.send(lastPayment);
+    } catch (error) {
+      next(error);
+    }
+  },
 };
+
+function getClockService() {
+  var today = new Date();
+  var clock =
+    today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  return clock;
+}
 
 module.exports = paymentControll;

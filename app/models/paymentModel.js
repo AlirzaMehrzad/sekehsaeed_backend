@@ -48,6 +48,16 @@ const paymentSchema = new mongoose.Schema(
     },
 
     resnumber: { type: String, required: true },
+
+    time: {
+      type: String,
+      required: true,
+    },
+
+    clock: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

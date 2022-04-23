@@ -141,7 +141,7 @@ const userControll = {
     try {
       const user = await userModel.findById(req.user.id).select("-password");
       if (!user) {
-        return res.status(400).send({
+        return res.status(401).send({
           message: "کاربر وجود ندارد",
         });
       }
