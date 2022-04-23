@@ -41,7 +41,12 @@ const paymentControll = {
               status: "success",
               url: response.url,
             });
+
+            var createTransaction =
+              Date.now() - Math.floor(Math.random() * 100);
+
             let pay = new PaymentModel({
+              transactionID: createTransaction,
               user_id: userID,
               fname: firstName,
               lname: lastName,
@@ -74,7 +79,7 @@ const paymentControll = {
       })
       .then((response) => {
         if (response.status !== 100) {
-          res.redirect("http://localhost:3000/cart");
+          res.redirect("http://localhost:3000/paymentFail");
         } else {
           payment.set({ status: true });
 
@@ -100,7 +105,9 @@ const paymentControll = {
   getPayment: async (req, res, next) => {
     //get all user payments
     try {
-      const payments = await PaymentModel.find({});
+      // get usrs's payments
+      const userID = req.body.userID;
+      const payments = await PaymentModel.find({ user_id: userID });
       res.send(payments);
     } catch (error) {
       next(error);
