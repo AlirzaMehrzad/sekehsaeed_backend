@@ -1,6 +1,7 @@
 const ZarinpalCheckout = require("zarinpal-checkout");
 const PaymentModel = require("../models/paymentModel");
 const UserModel = require("../models/userModel");
+const ProductsModel = require("../models/productModel");
 const moment = require("jalali-moment");
 /**
  * Create ZarinPal
@@ -86,6 +87,18 @@ const paymentControll = {
         if (response.status !== 100) {
           res.redirect("http://localhost:3000/paymentFail");
         } else {
+          for (let i = 0; i < payment.cart.length; i++) {
+            let products = payment.cart[i];
+            ProductsModel.findById(products._id, (err, product) => {
+              if (err) {
+                console.log(err);
+              } else {
+                product.quantity -= products.quantity;
+                product.save();
+              }
+            });
+          }
+
           payment.set({ status: true, clock: getClockService() });
           UserModel.findOne({ _id: payment.user_id }, (err, user) => {
             if (err) {
@@ -105,9 +118,7 @@ const paymentControll = {
   },
 
   getPayment: async (req, res, next) => {
-    //get all user payments
     try {
-      // get usrs's payments
       const userID = req.body.userID;
       const payments = await PaymentModel.find({ user_id: userID });
       res.send(payments);

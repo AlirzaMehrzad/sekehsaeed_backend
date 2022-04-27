@@ -73,6 +73,7 @@ const productControll = {
         content,
         images,
         category,
+        quantity,
       } = req.body;
 
       if (
@@ -82,7 +83,8 @@ const productControll = {
         !description ||
         !content ||
         !images ||
-        !category
+        !category ||
+        !quantity
       ) {
         return res.status(400).send({
           status: "fail",
@@ -103,6 +105,7 @@ const productControll = {
         content,
         images,
         category,
+        quantity,
       });
 
       await newProduct.save();
@@ -136,6 +139,7 @@ const productControll = {
         content,
         images,
         category,
+        quantity,
       } = req.body;
       if (!images) {
         return res
@@ -153,6 +157,7 @@ const productControll = {
           content,
           images,
           category,
+          quantity,
         }
       );
 

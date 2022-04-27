@@ -13,6 +13,7 @@ module.exports = (app) => {
       credentials: true,
     })
   );
+
   app.use(bodyParser.json());
 
   app.use(
