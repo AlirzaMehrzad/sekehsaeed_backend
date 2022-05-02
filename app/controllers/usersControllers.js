@@ -1,4 +1,5 @@
 const userModel = require("../models/userModel");
+const productModel = require("../models/productModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -160,14 +161,32 @@ const userControll = {
         });
       }
 
-      await userModel.findOneAndUpdate(
-        { _id: req.user.id },
-        { cart: req.body.cart }
-      );
+      const cart = req.body.cart;
+      // cart.forEach((item) => {
+      //   let productNAME = item.title;
+      //   let productQUANTITY = item.quantity;
+      //   if (products.stock <= productQUANTITY) {
+      //     console.log("موجودی کافی نیست");
+      //     return res.status(400).send({
+      //       status: "failed",
+      //       message: `موجودی کالا ${productNAME} کافی نمی باشد`,
+      //       cart,
+      //     });
+      //   }
+      //   res.status(200).send({
+      //     status: "success",
+      //     message: "با موفقیت به سبد خرید اضافه شد",
+      //     cart,
+      //   });
+      // });
 
       res.status(200).send({
+        status: "success",
         message: "با موفقیت به سبد خرید اضافه شد",
+        cart,
       });
+
+      await userModel.findOneAndUpdate({ _id: req.user.id }, { cart: cart });
     } catch (error) {
       next(error);
     }

@@ -63,6 +63,24 @@ const productControll = {
     }
   },
 
+  getOneProduct: async (req, res) => {
+    try {
+      const product = await productModel.findById(req.params.id);
+      if (!product) {
+        return res.status(404).send({
+          status: "fail",
+          message: "Product not found",
+        });
+      }
+      res.status(201).send({
+        status: "success",
+        product: product,
+      });
+    } catch (error) {
+      return res.status(500).send({ err: error.message });
+    }
+  },
+
   createProducts: async (req, res) => {
     try {
       const {
@@ -73,7 +91,7 @@ const productControll = {
         content,
         images,
         category,
-        quantity,
+        stock,
       } = req.body;
 
       if (
@@ -84,7 +102,7 @@ const productControll = {
         !content ||
         !images ||
         !category ||
-        !quantity
+        !stock
       ) {
         return res.status(400).send({
           status: "fail",
@@ -105,7 +123,7 @@ const productControll = {
         content,
         images,
         category,
-        quantity,
+        stock,
       });
 
       await newProduct.save();
@@ -139,7 +157,7 @@ const productControll = {
         content,
         images,
         category,
-        quantity,
+        stock,
       } = req.body;
       if (!images) {
         return res
@@ -157,7 +175,7 @@ const productControll = {
           content,
           images,
           category,
-          quantity,
+          stock,
         }
       );
 
