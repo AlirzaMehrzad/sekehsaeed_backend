@@ -5,8 +5,8 @@ const productControll = require("../controllers/productControllers");
 router
   .route("/")
   .get(productControll.getProducts)
-  .post(productControll.createProducts)
-  .patch(productControll.refreshBasket);
+  .post(productControll.createProducts);
+// .patch(productControll.refreshBasket);
 
 router
   .route("/:id")

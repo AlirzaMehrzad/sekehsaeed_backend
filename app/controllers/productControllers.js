@@ -186,39 +186,6 @@ const productControll = {
       return res.status(500).send({ err: error.message });
     }
   },
-
-  refreshBasket: async (req, res) => {
-    try {
-      const { cart } = req.body;
-      const products = await productModel.find({ _id: { $in: cart } });
-      let newCart = ([...cart], products);
-
-      // let newCart = cart.forEach((item) => {
-      //   products.forEach((product) => {
-      //     if (product._id === item._id) {
-      //       item.price = product.price;
-      //     }
-      //   });
-      // });
-      // const newCart = cart.map((e1) => {
-      //   const product = products.find((e2) => e2.product_id === e1.product_id);
-      //   if (product) {
-      //     return {
-      //       ...e1,
-      //       price: product.price,
-      //     };
-      //   }
-      // });
-      console.log(newCart);
-
-      res.status(201).send({
-        message: "سبد خرید با موفقیت بروزرسانی شد",
-        newCart,
-      });
-    } catch (error) {
-      return res.status(500).send({ err: error.message });
-    }
-  },
 };
 
 module.exports = productControll;

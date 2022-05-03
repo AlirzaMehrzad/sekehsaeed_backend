@@ -93,7 +93,7 @@ const paymentControll = {
               if (err) {
                 console.log(err);
               } else {
-                product.quantity -= products.quantity;
+                product.stock -= products.quantity;
                 product.save();
               }
             });
