@@ -15,4 +15,6 @@ router.get("/infor", auth, usersControllers.getUser);
 
 router.patch("/addcart", auth, usersControllers.addcart);
 
+router.patch("/:id/edit_info", usersControllers.editInfo);
+
 module.exports = router;

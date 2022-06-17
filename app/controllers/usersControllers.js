@@ -160,26 +160,7 @@ const userControll = {
           message: "کاربر وجود ندارد",
         });
       }
-
       const cart = req.body.cart;
-      // cart.forEach((item) => {
-      //   let productNAME = item.title;
-      //   let productQUANTITY = item.quantity;
-      //   if (products.stock <= productQUANTITY) {
-      //     console.log("موجودی کافی نیست");
-      //     return res.status(400).send({
-      //       status: "failed",
-      //       message: `موجودی کالا ${productNAME} کافی نمی باشد`,
-      //       cart,
-      //     });
-      //   }
-      //   res.status(200).send({
-      //     status: "success",
-      //     message: "با موفقیت به سبد خرید اضافه شد",
-      //     cart,
-      //   });
-      // });
-
       res.status(200).send({
         status: "success",
         message: "با موفقیت به سبد خرید اضافه شد",
@@ -187,6 +168,28 @@ const userControll = {
       });
 
       await userModel.findOneAndUpdate({ _id: req.user.id }, { cart: cart });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  editInfo: async (req, res, next) => {
+    try {
+      const user = await userModel.findById(req.params.id);
+      if (!user) {
+        return res.status(400).send({
+          message: "کاربر وجود ندارد",
+        });
+      }
+      const { fname, lname, address, mobile, email } = req.body;
+      await userModel.findOneAndUpdate(
+        { _id: req.params.id },
+        { fname, lname, address, mobile, email }
+      );
+      res.status(200).send({
+        status: "success",
+        message: "با موفقیت ویرایش شد",
+      });
     } catch (error) {
       next(error);
     }

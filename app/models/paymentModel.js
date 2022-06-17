@@ -58,6 +58,18 @@ const paymentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
+    deliveryMethod: {
+      type: String,
+    },
+
+    deliveryCost: {
+      type: Number,
+    },
+
+    taxCost: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

@@ -23,6 +23,9 @@ const paymentControll = {
       const lastName = req.body.lastName;
       const address = req.body.address;
       const cart = req.body.cart;
+      const tax = req.body.tax;
+      const deliveryType = req.body.deliveryMethod;
+      const deliveryPrice = req.body.deliveryCost;
 
       /**
        * PaymentRequest [module]
@@ -31,7 +34,7 @@ const paymentControll = {
 
       zarinpal
         .PaymentRequest({
-          Amount: total, // In Tomans
+          Amount: total + tax + deliveryPrice, // In Tomans
           CallbackURL: "http://localhost:4001/api/v5/payment/verify",
           Description: "خرید از درگاه بانکی اکسپوتک",
           Email: "hi@siamak.work",
@@ -49,6 +52,16 @@ const paymentControll = {
 
             var clock = getClockService();
 
+            // decrease product quantity in cart
+            // for (let i = 0; i < cart.length; i++) {
+            //   const productQuantity = cart[i].quantity;
+            //   const productID = cart[i].product_id;
+            //   const product = ProductsModel.findById(productID);
+            //   const productQuantityAfter = product.stock - productQuantity;
+            //   product.stock = productQuantityAfter;
+            //   product.save();
+            // }
+
             let pay = new PaymentModel({
               transactionID: createTransaction,
               user_id: userID,
@@ -56,11 +69,14 @@ const paymentControll = {
               lname: lastName,
               address: address,
               mobile: mobile,
-              price: total,
+              price: total + deliveryPrice + tax,
               cart: cart,
               resnumber: response.authority,
               time: moment().locale("fa").format("YYYY/M/D"),
               clock: clock,
+              deliveryMethod: deliveryType,
+              deliveryCost: deliveryPrice,
+              taxCost: tax,
             });
             pay.save();
           }
