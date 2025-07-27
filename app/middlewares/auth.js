@@ -4,7 +4,7 @@ const auth = (req, res, next) => {
   try {
     const token = req.header("Authorization");
     if (!token) {
-      return res.status(400).send({
+      return res.status(401).send({
         message: "شما صلاحیت استفاده از این قسمت را ندارید",
       });
     }

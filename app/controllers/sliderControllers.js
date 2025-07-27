@@ -1,4 +1,4 @@
-const sliderModel = require("../models/sliderModel");
+const sliderModel = require("../models/fileModel");
 
 const sliderControllers = {
   newPicture: (req, res, next) => {

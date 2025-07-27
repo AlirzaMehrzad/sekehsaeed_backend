@@ -1,11 +1,10 @@
-const cloudinary = require("cloudinary");
 const fs = require("fs");
 
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUD_API_KEY,
-  api_secret: process.env.CLOUD_API_SECRET,
-});
+// cloudinary.config({
+//   cloud_name: process.env.CLOUD_NAME,
+//   api_key: process.env.CLOUD_API_KEY,
+//   api_secret: process.env.CLOUD_API_SECRET,
+// });
 
 const uploadControll = {
   uploadImage: async (req, res) => {
@@ -31,22 +30,26 @@ const uploadControll = {
         return res.status(400).send({ message: "فرمت عکس صحیح نیست" });
       }
 
-      cloudinary.v2.uploader.upload(
-        file.tempFilePath,
-        { folder: "test" },
-        async (error, result) => {
-          if (error) {
-            throw error;
-          }
-
-          removeTmp(file.tempFilePath);
-          res.send({
+      return res.send({
             message: "تصویر آپلود شد",
-            public_id: result.public_id,
-            url: result.secure_url,
-          });
-        }
-      );
+      });
+
+      // cloudinary.v2.uploader.upload(
+      //   file.tempFilePath,
+      //   { folder: "test" },
+      //   async (error, result) => {
+      //     if (error) {
+      //       throw error;
+      //   }
+
+      //     removeTmp(file.tempFilePath);
+      //     res.send({
+      //       message: "تصویر آپلود شد",
+      //       public_id: result.public_id,
+      //       url: result.secure_url,
+      //     });
+      //   }
+      // );
     } catch (error) {
       return res.status(500).send({ err: error.message });
     }
