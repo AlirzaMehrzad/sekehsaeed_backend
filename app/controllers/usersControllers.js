@@ -115,6 +115,42 @@ const userControll = {
 		}
 	},
 
+	registerAsuperAdmin: async (req, res, next) => {
+		try {
+			const { fname, lname, mobile, password, email, role, isAdmin } = req.body;
+
+			const passwordHash = await bcrypt.hash(password, 10);
+			const newUser = new userModel({
+				fname,
+				lname,
+				mobile,
+				password: passwordHash,
+				email,
+				address,
+				role,
+				isAdmin,
+			});
+			await newUser.save();
+
+			const accesstoken = creatAccessToken({ id: newUser._id });
+			const refreshtoken = createRefreshToken({ id: newUser._id });
+
+			res.cookie("refreshtoken", refreshtoken, {
+				httpOnly: true,
+				path: "/api/v1/user/refresh_token",
+			});
+
+			res.status(201).send({
+				success: true,
+				message: `${newUser.fname} عزیز به سامانه خوش آمدید`,
+				token: accesstoken,
+				//newUser,
+			});
+		} catch (error) {
+			next(error);
+		}
+	},
+
 	smsVerify: async (req, res, next) => {
 		try {
 			const { mobile, password } = req.body;
@@ -266,12 +302,6 @@ const userControll = {
 		try {
 			const rf_token = req.cookies.refreshtoken;
 			console.log("rf-token", rf_token);
-			// if (!rf_token) {
-			//   return res.status(401).send({
-			//     success: false,
-			//     message: "...لطفا وارد حساب کاربری شوید یا ثبت نام کنید",
-			//   });
-			// }
 
 			jwt.verify(rf_token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
 				if (err) {

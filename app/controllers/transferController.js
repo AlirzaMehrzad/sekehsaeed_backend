@@ -193,13 +193,12 @@ const transferControll = {
 			});
 			// const oldAction = transfer.actions[`${actionOrder}`]
 
-			const Price = deletePriceCommas(Number(price));
+			const Price = deletePriceCommas(price);
 			const OldActionPrice = Number(oldAction.price);
 
 			if (Price > OldActionPrice) {
 				const caclDiff = Price - OldActionPrice;
 				const newPayed = transfer.payed + caclDiff;
-
 				await transferModel.findOneAndUpdate(
 					{ _id: transferId },
 					{ payed: newPayed }
@@ -209,7 +208,6 @@ const transferControll = {
 			if (Price < OldActionPrice) {
 				const caclDiff = OldActionPrice - Price;
 				const newPayed = transfer.payed - caclDiff;
-				console.log("newPAYED", newPayed);
 				await transferModel.findOneAndUpdate(
 					{ _id: transferId },
 					{ payed: newPayed }
@@ -330,43 +328,36 @@ const transferControll = {
 
 	getTransfers: async (req, res, next) => {
 		try {
-			const { limit, page, dateFilter, name, isFinished, isDeleted } =
+			const { limit, page, dateFilter, name, isFinished, isDeleted, isAll } =
 				req.query;
-			const { companyId } = req.body;
-
-			console.log("🔍 Raw query params:", req.query);
-			console.log("🏢 Company ID:", companyId);
+			const { companyId } = req.params;
 
 			let queryFilter = { companyId };
 
-			// Handle finished
-			if (isFinished === "true") queryFilter.finished = true;
-			else if (isFinished === "false") queryFilter.finished = false;
+			const skipFilters = isAll === "true";
 
-			// Handle deleted
-			if (isDeleted === "true") queryFilter.deleted = true;
-			else if (isDeleted === "false") queryFilter.deleted = false;
-			else queryFilter.deleted = false; // Default
+			if (!skipFilters) {
+				const finishedBool = isFinished;
+				const deletedBool = isDeleted;
 
-			// Handle date filter
-			if (dateFilter) {
-				let sentDate = new Date(dateFilter);
-				sentDate.setHours(0, 0, 0, 0);
+				if (finishedBool !== undefined) queryFilter.finished = finishedBool;
+				if (deletedBool !== undefined) queryFilter.deleted = deletedBool;
 
-				let nextDay = new Date(sentDate);
-				nextDay.setDate(nextDay.getDate() + 1);
-
-				queryFilter.date = { $gte: sentDate, $lt: nextDay };
-			} else if (!name) {
-				const today = new Date();
-				today.setHours(0, 0, 0, 0);
-				const tomorrow = new Date(today);
-				tomorrow.setDate(tomorrow.getDate() + 1);
-
-				queryFilter.date = { $gte: today, $lt: tomorrow };
+				if (dateFilter) {
+					const sentDate = new Date(dateFilter);
+					sentDate.setHours(0, 0, 0, 0);
+					const nextDay = new Date(sentDate);
+					nextDay.setDate(nextDay.getDate() + 1);
+					queryFilter.date = { $gte: sentDate, $lt: nextDay };
+				}
+				// else if (!name) {
+				// 	const today = new Date();
+				// 	today.setHours(0, 0, 0, 0);
+				// 	const tomorrow = new Date(today);
+				// 	tomorrow.setDate(tomorrow.getDate() + 1);
+				// 	queryFilter.date = { $gte: today, $lt: tomorrow };
+				// }
 			}
-
-			console.log("🧾 Final query filter:", queryFilter);
 
 			const baseQuery = transferModel.find(queryFilter);
 
@@ -377,10 +368,9 @@ const transferControll = {
 
 			const transfers = await features.query;
 
-			console.log("✅ Found transfers:", transfers.length);
-
-			res.status(201).send({
+			res.status(200).json({
 				success: true,
+				count: transfers.length,
 				transfers,
 			});
 		} catch (error) {
