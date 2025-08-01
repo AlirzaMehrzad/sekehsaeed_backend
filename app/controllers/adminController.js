@@ -1,5 +1,6 @@
 const userModel = require("../models/userModel");
-const companyModel = require("../models/companyModel");
+const CompanyModel = require("../models/companyModel");
+const UserModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -37,6 +38,47 @@ const AdminControll = {
 		} catch (error) {
 			next(error);
 		}
+	},
+
+	createCompany: async (req, res, next) => {
+		const {
+			fname,
+			lname,
+			mobile,
+			password,
+			email,
+			address,
+			expireDate,
+			companyName,
+			role,
+		} = req.body;
+
+		const newUser = await new UserModel({
+			fname,
+			lname,
+			mobile,
+			password,
+			role: 512,
+		}).save();
+		if (!newUser) {
+			return res.status(400).json({ msg: "کاربر ایجاد نشد" });
+		}
+
+		const newCompany = await new CompanyModel({
+			companyName,
+			contacts: [newUser._id],
+			owner: [newUser._id],
+			expireDate,
+			mobile,
+		}).save();
+		if (!newCompany) {
+			return res.status(400).json({ msg: "کسب‌و‌کار ایجاد نشد" });
+		}
+
+		return res.status(200).json({
+			success: true,
+			msg: "کسب‌و‌کار ایجاد شد",
+		});
 	},
 
 	loginByPassword: async (req, res, next) => {

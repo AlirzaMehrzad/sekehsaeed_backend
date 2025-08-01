@@ -12,7 +12,7 @@ router.post(
 	adminController.registerAdmin
 );
 
-router.post("/createCompany", authAdmin);
+router.post("/createCompany", authAdmin, adminController.createCompany);
 
 // TODO
 router.post("/getCompanies");

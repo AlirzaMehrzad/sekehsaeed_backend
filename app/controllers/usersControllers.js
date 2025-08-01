@@ -115,42 +115,6 @@ const userControll = {
 		}
 	},
 
-	registerAsuperAdmin: async (req, res, next) => {
-		try {
-			const { fname, lname, mobile, password, email, role, isAdmin } = req.body;
-
-			const passwordHash = await bcrypt.hash(password, 10);
-			const newUser = new userModel({
-				fname,
-				lname,
-				mobile,
-				password: passwordHash,
-				email,
-				address,
-				role,
-				isAdmin,
-			});
-			await newUser.save();
-
-			const accesstoken = creatAccessToken({ id: newUser._id });
-			const refreshtoken = createRefreshToken({ id: newUser._id });
-
-			res.cookie("refreshtoken", refreshtoken, {
-				httpOnly: true,
-				path: "/api/v1/user/refresh_token",
-			});
-
-			res.status(201).send({
-				success: true,
-				message: `${newUser.fname} عزیز به سامانه خوش آمدید`,
-				token: accesstoken,
-				//newUser,
-			});
-		} catch (error) {
-			next(error);
-		}
-	},
-
 	smsVerify: async (req, res, next) => {
 		try {
 			const { mobile, password } = req.body;
@@ -238,9 +202,15 @@ const userControll = {
 	loginByPassword: async (req, res, next) => {
 		try {
 			const { mobile, password } = req.body;
-			console.log("password is:", password);
 			const user = await userModel.findOne({ mobile });
-			console.log(user);
+			if (!user)
+				return { success: false, message: "کاربری با این تلفن ثبت نشده" };
+			const accesstoken = creatAccessToken({ id: user._id });
+			const refreshtoken = createRefreshToken({ id: user._id });
+			res.cookie("refreshtoken", refreshtoken, {
+				httpOnly: true,
+				path: "/api/v1/user/refresh_token",
+			});
 			const isMatch = await bcrypt.compare(password, user.password);
 			if (!isMatch) {
 				return res.status(400).send({
@@ -256,16 +226,17 @@ const userControll = {
 				});
 			}
 
-			const company = await companyModel.findById(user.companyId);
-			if (company.expireDate >= new Date()) {
-				const accesstoken = creatAccessToken({ id: user._id });
-				const refreshtoken = createRefreshToken({ id: user._id });
-
-				res.cookie("refreshtoken", refreshtoken, {
-					httpOnly: true,
-					path: "/api/v1/user/refresh_token",
+			if (user.isAdmin) {
+				return res.status(200).send({
+					accesstoken,
+					success: true,
+					message: `${user.fname} ${user.lname} خوش آمدید`,
 				});
-
+			}
+			console.log("user.companyId", user.companyId);
+			const company = await companyModel.findById(user.companyId);
+			console.log("company", company);
+			if (company?.expireDate >= new Date()) {
 				res.status(200).send({
 					accesstoken,
 					success: true,
